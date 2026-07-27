@@ -1,4 +1,4 @@
-# Brilliant Text
+# ![icon.png](images/icon.png) Brilliant Text
 
 A Library for Minecraft 1.12.2 that allows you to give your text more flare. Inspired by similar looking tooltips that
 exist in Terraria. This mod pairs well with
@@ -17,13 +17,13 @@ formatting from this mod applied to a text will override any vanilla formatting 
 >
 > Example: `§gLegendary Item`
 >
-> ![legendary_formatting.png](images/legendary_formatting.gif)
+> ![legendary_formatting.gif](images/legendary_formatting.gif)
 
 > `§s`: Makes the text look silver
 >
 > Example: `§sRare Item`
 >
-> ![rare_formatting.png](images/rare_formatting.gif)
+> ![rare_formatting.gif](images/rare_formatting.gif)
 
 > `§qUncommon Item`: Makes the text look bronze
 >
@@ -35,7 +35,7 @@ formatting from this mod applied to a text will override any vanilla formatting 
 >
 > Example: `§vBurning Item`
 >
-> ![burning_formatting.png](images/burning_formatting.gif)
+> ![burning_formatting.gif](images/burning_formatting.gif)
 
 ## Custom Colors
 

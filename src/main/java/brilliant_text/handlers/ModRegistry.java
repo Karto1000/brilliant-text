@@ -12,12 +12,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = BrilliantText.MODID)
 public class ModRegistry {
+//    public static TestItem TEST_ITEM = new TestItem("test_item", EnumRarity.RARE);
+
     public static void init() {
 
     }
 
     @SubscribeEvent
     public static void registerItemEvent(RegistryEvent.Register<Item> event) {
+//        event.getRegistry().register(TEST_ITEM);
     }
 
     @SubscribeEvent

@@ -1,4 +1,5 @@
-item.brilliant_text.legendary_item.name=§gLegendary Item
-item.brilliant_text.rare_item.name=§sRare Item
-item.brilliant_text.uncommon_item.name=§qUncommon Item
-item.brilliant_text.burning_item.name=§vBurning Item
+#item.brilliant_text.legendary_item.name=§gLegendary Item
+#item.brilliant_text.rare_item.name=§sRare Item
+#item.brilliant_text.uncommon_item.name=§qUncommon Item
+#item.brilliant_text.burning_item.name=§vBurning Item
+#item.brilliant_text.test_item.name=§gBT
