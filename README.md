@@ -1,6 +1,8 @@
 # Brilliant Text
 
-A Library for Minecraft 1.12.2 that allows you to give your text more flare.
+A Library for Minecraft 1.12.2 that allows you to give your text more flare. Inspired by similar looking tooltips that
+exist in Terraria. This mod pairs well with
+the [Legendary Tooltips](https://www.curseforge.com/minecraft/mc-mods/legendary-tooltips) mod.
 
 ## How to use
 
@@ -42,6 +44,9 @@ formatting from this mod applied to a text will override any vanilla formatting 
 
 If you want to customize the text, outline, glow and particle colors, you can create a new shader that implements the
 `IOutlinedTextShader` interface. From there you can customize the hex color codes for each component.
+
+> [!important]
+> The hex color is stored as `ARGB` instead of the more common `RGBA`
 
 > For example, this is how the `GoldShader` is implemented internally:
 > ```java
@@ -107,11 +112,11 @@ the
 
 ## Custom Shaders
 
-If you want to implement something brand new, you first need to bind your custom vertex and fragment shaders in the
-`ClientProxy` `init()` using the `BrilliantShaderManager.registerShader(String, ResourceLocation, ResourceLocation)`
+If you want to implement something brand new, you first need to bind your custom vertex and fragment shaders in a 
+`ClientProxy.init()` method using the `BrilliantShaderManager.registerShader(String, ResourceLocation, ResourceLocation)`
 method.
 
-> Example with the default shader:
+> Example from the default shader:
 > ```java
 > @SideOnly(Side.CLIENT)
 > public class BrilliantTextManager {
@@ -145,14 +150,20 @@ method.
 > These shaders receive the following `uniforms` by default
 >
 > ```glsl
+> // The Framebuffer object sampler that contains all of the text which should be formatted
 > uniform sampler2D u_texture;
+> // The size of the Framebuffer texture. This contains the scaled window width and height 
 > uniform vec2 u_textureSize;
+> // The top left coordinates (x, y) of the text
 > uniform vec2 u_stringTopLeft;
+> // The bottom right coordinates (x, y) of the text
 > uniform vec2 u_stringBottomRight;
 > ```
 
-You can then create a new class that implements the `ITextShader` interface. When Implementing the `renderPass()` method
-be sure to call `ITextShader.super.renderPass()`, or else the `uniforms` that are listed above won't be passed.
+You can then create a new class that implements the `ITextShader` interface. 
+
+> [!important]
+> Be sure to call `ITextShader.super.renderPass()` when implementing the `renderPass()` method, or else the `uniforms` that are listed above won't be passed.
 
 > Example implementation of the `FlameTextShader`:
 > ```java
@@ -175,4 +186,4 @@ be sure to call `ITextShader.super.renderPass()`, or else the `uniforms` that ar
 > }
 > ```
 
-Finally, you need to again bind the shader to a character as explained in the [Custom Colors Section](#custom-colors)
+Finally, you need to bind the shader to a character as explained in the [Custom Colors Section](#custom-colors)
