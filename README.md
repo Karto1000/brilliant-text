@@ -39,8 +39,11 @@ formatting from this mod applied to a text will override any vanilla formatting 
 
 ## Custom Colors
 
-> [!note]
-> As of now custom colors cannot be solely defined in a config, although this is planned for the future.
+### Config
+
+You can define custom colors via the `brilliant_text.cfg` file located in the `config` folder.
+
+### Code
 
 If you want to customize the text, outline, glow and particle colors, you can create a new shader that implements the
 `IOutlinedTextShader` interface. From there you can customize the hex color codes for each component.
@@ -112,8 +115,9 @@ the
 
 ## Custom Shaders
 
-If you want to implement something brand new, you first need to bind your custom vertex and fragment shaders in a 
-`ClientProxy.init()` method using the `BrilliantShaderManager.registerShader(String, ResourceLocation, ResourceLocation)`
+If you want to implement something brand new, you first need to bind your custom vertex and fragment shaders in a
+`ClientProxy.init()` method using the
+`BrilliantShaderManager.registerShader(String, ResourceLocation, ResourceLocation)`
 method.
 
 > Example from the default shader:
@@ -160,10 +164,11 @@ method.
 > uniform vec2 u_stringBottomRight;
 > ```
 
-You can then create a new class that implements the `ITextShader` interface. 
+You can then create a new class that implements the `ITextShader` interface.
 
 > [!important]
-> Be sure to call `ITextShader.super.renderPass()` when implementing the `renderPass()` method, or else the `uniforms` that are listed above won't be passed.
+> Be sure to call `ITextShader.super.renderPass()` when implementing the `renderPass()` method, or else the `uniforms`
+that are listed above won't be passed.
 
 > Example implementation of the `FlameTextShader`:
 > ```java
