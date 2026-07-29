@@ -29,6 +29,7 @@ public interface IParticleSpawner {
 
     /// Build a new particle
     ///
+    /// @param data The text data
     /// @return The particle that should be spawned
     @Nonnull
     BrilliantParticle getNewParticle(@Nonnull BrilliantTextData data);
