@@ -15,6 +15,8 @@ public class ForgeConfigHandler {
 	public static final ClientConfig client = new ClientConfig();
 
 	public static class ClientConfig {
+		@Config.Name("Debug Mode")
+		public boolean DEBUG = false;
 	}
 
 	@Mod.EventBusSubscriber(modid = BrilliantText.MODID)

@@ -4,6 +4,7 @@ import brilliant_text.BrilliantText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class GoldShader implements IOutlinedTextShader {
@@ -13,22 +14,23 @@ public class GoldShader implements IOutlinedTextShader {
     );
 
     @Override
-    public Integer getTextColor() {
+    public int getTextColor() {
         return 0xFF986B31;
     }
 
+    @Nonnull
     @Override
     public Optional<Integer> getGlowColor() {
         return this.getOutlineColor();
     }
 
     @Override
-    public Optional<Integer> getOutlineColor() {
+    public @Nonnull Optional<Integer> getOutlineColor() {
         return Optional.of(0xFFFCE670);
     }
 
     @Override
-    public Optional<ParticleSettings> getSettingsForNewParticle() {
+    public @Nonnull Optional<ParticleSettings> getSettingsForNewParticle() {
         Minecraft mc = Minecraft.getMinecraft();
         return Optional.of(
                 ParticleSettings.builder()

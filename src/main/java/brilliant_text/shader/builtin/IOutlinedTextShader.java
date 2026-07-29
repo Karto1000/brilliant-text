@@ -12,6 +12,7 @@ import net.minecraft.util.math.Vec2f;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public interface IOutlinedTextShader extends ITextShader {
     /// Decides the color of the glow in the background of the text
     ///
     /// @return The color represented as hex wrapped in an optional. An empty optional indicates that no glow is present
+    @Nonnull
     default Optional<Integer> getGlowColor() {
         return Optional.empty();
     }
@@ -26,6 +28,7 @@ public interface IOutlinedTextShader extends ITextShader {
     /// Decides the color of the text outline
     ///
     /// @return The color represented as hex wrapped in an optional. An empty optional indicates that no outline is present
+    @Nonnull
     default Optional<Integer> getOutlineColor() {
         return Optional.empty();
     }
@@ -33,13 +36,14 @@ public interface IOutlinedTextShader extends ITextShader {
     /// Decides the color of the text
     ///
     /// @return The color of the text as hex
-    default Integer getTextColor() {
+    default int getTextColor() {
         return 0xFFFFFFFF;
     }
 
     /// Get the particle settings
     ///
     /// @return The particle settings wrapped in an optional. An empty optional indicates that no particles will be spawned
+    @Nonnull
     default Optional<ParticleSettings> getSettingsForNewParticle() {
         return Optional.empty();
     }
@@ -51,9 +55,9 @@ public interface IOutlinedTextShader extends ITextShader {
     }
 
     default void renderPass(
-            BufferBuilder buffer,
-            BrilliantTextData brilliantTextData,
-            ScaledResolution res
+            @Nonnull BufferBuilder buffer,
+            @Nonnull BrilliantTextData brilliantTextData,
+            @Nonnull ScaledResolution res
     ) {
         Optional<ParticleSettings> settings = this.getSettingsForNewParticle();
         settings.ifPresent(s -> {
@@ -62,7 +66,8 @@ public interface IOutlinedTextShader extends ITextShader {
                 BrilliantParticle particle = new BrilliantParticle(
                         new Vec2f(
                                 brilliantTextData.aabb.x + mc.world.rand.nextInt(brilliantTextData.aabb.width),
-                                brilliantTextData.aabb.y - ((float) brilliantTextData.aabb.height / 2) + mc.world.rand.nextInt(brilliantTextData.aabb.height)
+                                brilliantTextData.aabb.y - ((float) brilliantTextData.aabb.height / 2) + mc.world.rand.nextInt(
+                                        brilliantTextData.aabb.height)
                         ),
                         s
                 );

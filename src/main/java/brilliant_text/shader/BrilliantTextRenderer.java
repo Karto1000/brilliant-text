@@ -102,6 +102,11 @@ public class BrilliantTextRenderer {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onGuiDrawScreenPost(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (brilliantTexts.isEmpty()) {
+            particles.clear();
+            return;
+        };
+
         flush();
     }
 

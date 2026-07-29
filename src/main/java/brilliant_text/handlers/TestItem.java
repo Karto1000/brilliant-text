@@ -18,6 +18,12 @@ public class TestItem extends Item {
         this.rarity = rarity;
     }
 
+    public TestItem(String id) {
+        this.setRegistryName(BrilliantText.MODID,id);
+        this.setTranslationKey(String.format("brilliant_text.%s", id));
+        this.rarity = EnumRarity.COMMON;
+    }
+
     @Override
     public IRarity getForgeRarity(@Nonnull ItemStack stack) {
         return this.rarity;

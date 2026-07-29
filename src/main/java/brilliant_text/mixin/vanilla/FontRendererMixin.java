@@ -104,8 +104,6 @@ public abstract class FontRendererMixin {
 
             ITextShader shader = oShader.get();
 
-            // HERE
-
             BrilliantTextRenderer.addBrilliantTextAt(
                     new AABB2D(x, y, this.getStringWidth(text), this.FONT_HEIGHT),
                     shader
