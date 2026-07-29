@@ -7,7 +7,7 @@
   "mcversion": "${mcversion}",
   "url": "https://www.curseforge.com/members/ReplaceMeAuthor/projects",
   "updateUrl": "",
-  "authorList": ${mod_author},
+  "authorList": "${mod_author}",
   "credits": "",
   "logoFile": "",
   "dependencies": []
