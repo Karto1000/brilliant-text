@@ -1,11 +1,16 @@
 package brilliant_text.shader;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.ARBShaderObjects;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public interface ITextShader {
     /// Method that should return the OpenGL id referencing the shader program
     ///
@@ -18,9 +23,9 @@ public interface ITextShader {
     /// @param brilliantTextData The text data
     /// @param res               The scaled resolution
     default void renderPass(
-            @Nonnull BufferBuilder buffer,
-            @Nonnull BrilliantTextData brilliantTextData,
-            @Nonnull ScaledResolution res
+            BufferBuilder buffer,
+            BrilliantTextData brilliantTextData,
+            ScaledResolution res
     ) {
         int programId = this.getShaderProgramId();
         ARBShaderObjects.glUseProgramObjectARB(programId);
@@ -46,9 +51,5 @@ public interface ITextShader {
         if (textureSizeUniform != -1)
             ARBShaderObjects.glUniform2fARB(textureSizeUniform, res.getScaledWidth(), res.getScaledHeight());
         if (timeUniform != -1) ARBShaderObjects.glUniform1fARB(timeUniform, timeSec);
-    }
-
-    /// A method that runs after a onRenderTick event is dispatched with the END phase
-    default void onRenderTick() {
     }
 }

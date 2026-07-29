@@ -3,6 +3,7 @@ package brilliant_text.shader;
 import brilliant_text.BrilliantText;
 import brilliant_text.shader.builtin.BrilliantParticle;
 import brilliant_text.util.AABB2D;
+import brilliant_text.util.ColorHelper;
 import brilliant_text.util.TextureTarget;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -18,14 +20,17 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = BrilliantText.MODID, value = Side.CLIENT)
+@ParametersAreNonnullByDefault
+@SideOnly(Side.CLIENT)
 public class BrilliantTextRenderer {
     @Getter
     private static TextureTarget fboTarget;
@@ -79,18 +84,16 @@ public class BrilliantTextRenderer {
             fboTarget.clear();
             brilliantTexts.clear();
         } else if (event.phase == TickEvent.Phase.END) {
-            for (Map.Entry<FormatCharacter, ITextShader> textShader : BrilliantTextManager.getShaders().entrySet()) {
-                textShader.getValue().onRenderTick();
-            }
+            BrilliantTextRenderer.renderParticles();
         }
     }
 
     public static void flush() {
         if (brilliantTexts.isEmpty()) return;
 
-        drawFBOToScreen();
+        BrilliantTextRenderer.drawFBOToScreen();
 
-        // Clear queue & FBO so subsequent passes start fresh
+        // Clear queue & FBO so later passes start fresh
         brilliantTexts.clear();
         fboTarget.clear();
     }
@@ -105,9 +108,76 @@ public class BrilliantTextRenderer {
         if (brilliantTexts.isEmpty()) {
             particles.clear();
             return;
-        };
+        }
 
         flush();
+    }
+
+    private static void renderParticles() {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+
+        GlStateManager.disableDepth();
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+
+        List<BrilliantParticle> particles = BrilliantTextRenderer.getParticles();
+        for (int i = particles.size() - 1; i >= 0; i--) {
+            BrilliantParticle particle = particles.get(i);
+            particle.onRenderTick();
+
+            mc.getTextureManager().bindTexture(particle.texture);
+
+            if (particle.currentLifetime == 0) {
+                particles.remove(i);
+                continue;
+            }
+
+            float alpha = particle.currentLifetime / particle.maxLifetime;
+
+            float hw = particle.dimensions;
+            float hh = particle.dimensions;
+            float cx = particle.x + hw;
+            float cy = particle.y + hh;
+
+            // Calculate rotation
+            float angleRad = (float) Math.toRadians(particle.rotation);
+            float cos = (float) Math.cos(angleRad);
+            float sin = (float) Math.sin(angleRad);
+
+            // Calculate rotated corners
+            // Top-Left
+            float x1 = cx + (-hw * cos - -hh * sin);
+            float y1 = cy + (-hw * sin + -hh * cos);
+            // Bottom-Left
+            float x2 = cx + (-hw * cos - hh * sin);
+            float y2 = cy + (-hw * sin + hh * cos);
+            // Bottom-Right
+            float x3 = cx + (hw * cos - hh * sin);
+            float y3 = cy + (hw * sin + hh * cos);
+            // Top-Right
+            float x4 = cx + (hw * cos - -hh * sin);
+            float y4 = cy + (hw * sin + -hh * cos);
+
+            ColorHelper.ARGBNorm argb = ColorHelper.hexToARGBNorm(particle.color);
+            buffer.pos(x1, y1, 0).tex(0, 0).color(argb.r, argb.g, argb.b, alpha).endVertex();
+            buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, alpha).endVertex();
+            buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, alpha).endVertex();
+            buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, alpha).endVertex();
+
+            particle.currentLifetime--;
+            particle.rotation += particle.rotationsPerFrame;
+
+        }
+
+        tessellator.draw();
+
+        GlStateManager.enableDepth();
+        GlStateManager.enableLighting();
     }
 
     private static void drawFBOToScreen() {
@@ -144,6 +214,13 @@ public class BrilliantTextRenderer {
 
         if (BrilliantShaderManager.hasAnyShaders()) {
             for (BrilliantTextData brilliantTextData : brilliantTexts) {
+                if (brilliantTextData.shader instanceof IParticleSpawner) {
+                    IParticleSpawner spawner = (IParticleSpawner) brilliantTextData.shader;
+                    BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
+                    Minecraft mc = Minecraft.getMinecraft();
+                    if (spawner.shouldSpawnParticle(mc.world.rand)) BrilliantTextRenderer.getParticles().add(particle);
+                }
+
                 brilliantTextData.shader.renderPass(buffer, brilliantTextData, res);
                 tessellator.draw();
             }

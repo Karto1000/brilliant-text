@@ -1,9 +1,6 @@
 package brilliant_text.shader.builtin;
 
-import brilliant_text.shader.BrilliantShaderManager;
-import brilliant_text.shader.BrilliantTextData;
-import brilliant_text.shader.ITextShader;
-import brilliant_text.shader.ShaderNotFoundException;
+import brilliant_text.shader.*;
 import lombok.NonNull;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -11,10 +8,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 
 import static brilliant_text.shader.BrilliantTextManager.FLAME_SHADER_DESIGNATION;
 
-public class FlameTextShader implements ITextShader {
+public class FlameTextShader implements ITextShader, IParticleSpawner {
     @Override
     public int getShaderProgramId() throws ShaderNotFoundException {
         return BrilliantShaderManager.getProgramId(FLAME_SHADER_DESIGNATION)
@@ -29,12 +27,11 @@ public class FlameTextShader implements ITextShader {
     ) {
         ITextShader.super.renderPass(buffer, brilliantTextData, res);
 
-        float padding = 2.0f;
+        float padding = 1;
         float minX = brilliantTextData.aabb.getMinX() - padding;
         float minY = brilliantTextData.aabb.getMinY() - padding;
         float maxX = brilliantTextData.aabb.getMaxX() + padding;
         float maxY = brilliantTextData.aabb.getMaxY() + padding;
-
         float uMin = minX / res.getScaledWidth();
         float vMin = 1.0f - (maxY / res.getScaledHeight());
         float uMax = maxX / res.getScaledWidth();
@@ -45,5 +42,19 @@ public class FlameTextShader implements ITextShader {
         buffer.pos(minX, maxY, 0.0D).tex(uMin, vMin).endVertex();
         buffer.pos(maxX, maxY, 0.0D).tex(uMax, vMin).endVertex();
         buffer.pos(maxX, minY, 0.0D).tex(uMax, vMax).endVertex();
+    }
+
+    @Override
+    public boolean shouldSpawnParticle(@Nonnull Random random) {
+        return random.nextInt(20) == 0;
+    }
+
+    /// Get the particle
+    ///
+    /// @return The particle that should be spawned
+    @Nonnull
+    @Override
+    public BrilliantParticle getNewParticle(@Nonnull BrilliantTextData data) {
+        return new FlameParticle(data.aabb.getRandomPositionInside());
     }
 }

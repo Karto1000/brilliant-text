@@ -1,5 +1,8 @@
 package brilliant_text.util;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.Vec2f;
+
 public class AABB2D {
     public final float x;
     public final float y;
@@ -27,5 +30,13 @@ public class AABB2D {
 
     public float getMinY() {
         return this.y;
+    }
+
+    public Vec2f getRandomPositionInside() {
+        Minecraft mc = Minecraft.getMinecraft();
+        return new Vec2f(
+                this.x + mc.world.rand.nextInt(this.width),
+                this.y - ((float) this.height / 2) + mc.world.rand.nextInt(this.height)
+        );
     }
 }

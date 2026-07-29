@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ModRegistry {
     public static TestItem GOLD_TEST = new TestItem("gold_item");
     public static TestItem SILVER_TEST = new TestItem("silver_item");
-    public static TestItem COPPER_TEST = new TestItem("copper_test");
-    public static TestItem BURNING_TEST = new TestItem("burning_test");
+    public static TestItem COPPER_TEST = new TestItem("copper_item");
+    public static TestItem BURNING_TEST = new TestItem("burning_item");
 
     public static void init() {
 
