@@ -45,22 +45,19 @@ You can define custom colors via the `brilliant_text.cfg` file located in the `c
 
 ### Code
 
-If you want to customize the text, outline, glow and particle colors, you can create a new shader that implements the
-`IOutlinedTextShader` interface. From there you can customize the hex color codes for each component.
+If you want to customize the text, outline and glow, you can create a new shader that implements the
+`IOutlinedTextShader` interface. If you also want that shader to spawn particles, you need to implement the
+`IParticleSpawner` interface as well. From there you can customize the hex color codes for each component.
 
 > [!important]
 > The hex color is stored as `ARGB` instead of the more common `RGBA`
 
-> For example, this is how the `GoldShader` is implemented internally:
+> For example, this is how the `GoldShader` would be implemented internally:
 > ```java
-> public class GoldShader implements IOutlinedTextShader {
->     private static final ResourceLocation PARTICLE_TEXTURE = new ResourceLocation(
->             BrilliantText.MODID,
->             "textures/particles/glow.png"
->     );
+> public class GoldShader implements IOutlinedTextShader, IParticleSpawner {
 > 
 >     @Override
->     public Integer getTextColor() {
+>     public int getTextColor() {
 >         return 0xFF986B31;
 >     }
 > 
@@ -75,19 +72,20 @@ If you want to customize the text, outline, glow and particle colors, you can cr
 >     }
 > 
 >     @Override
->     public Optional<ParticleSettings> getSettingsForNewParticle() {
+>     public boolean shouldSpawnParticle(@Nonnull Random random) {
+>         return random.nextInt(100) == 0;
+>     } 
+> 
+>     @Override
+>     public ParticleSettings getNewParticle(@Nonnull BrilliantTextData data) {
 >         Minecraft mc = Minecraft.getMinecraft();
->         return Optional.of(
->                 ParticleSettings.builder()
->                         .resourceLocation(PARTICLE_TEXTURE)
->                         .color(this.getOutlineColor().get())
->                         .maxLifetime(200)
->                         .particleEveryXFrames(100)
->                         .startingRotationDegrees(mc.world.rand.nextInt(360))
->                         .rotationPerFrame(mc.world.rand.nextFloat())
->                         .dimensions(mc.world.rand.nextInt(4) + 2)
->                         .build()
->         );
+>         return new BrilliantParticleBuilder(GLOW_PARTICLE_TEXTURE_1, data.aabb.getRandomPositionInside())
+>               .color(this.getOutlineColor().get())
+>               .lifetime(200)
+>               .rotation(mc.world.rand.nextInt(360))
+>               .rotationsPerFrame(mc.world.rand.nextFloat())
+>               .dimensions(mc.world.rand.nextInt(4) + 2)
+>               .build();
 >     }
 > }
 > ```
@@ -162,6 +160,8 @@ method.
 > uniform vec2 u_stringTopLeft;
 > // The bottom right coordinates (x, y) of the text
 > uniform vec2 u_stringBottomRight;
+> // A time variable
+> uniform float u_time;
 > ```
 
 You can then create a new class that implements the `ITextShader` interface.
