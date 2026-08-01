@@ -1,15 +1,17 @@
 [
-{
-  "modid": "${mod_id}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://www.curseforge.com/members/ReplaceMeAuthor/projects",
-  "updateUrl": "",
-  "authorList": ["Kartoffelbauer1000"],
-  "credits": "",
-  "logoFile": "",
-  "dependencies": []
-}
+  {
+    "modid": "${mod_id}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/members/ReplaceMeAuthor/projects",
+    "updateUrl": "",
+    "authorList": [
+      "Kartoffelbauer1000"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "dependencies": []
+  }
 ]
