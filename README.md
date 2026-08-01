@@ -6,12 +6,8 @@ the [Legendary Tooltips](https://www.curseforge.com/minecraft/mc-mods/legendary-
 
 ## How to use
 
-Out-of-the-box the library provides multiple formatting codes you can use like vanilla formatting codes. Any custom
-formatting from this mod applied to a text will override any vanilla formatting that text had previously.
-
-> [!note]
-> These codes must be at the beginning of a line. Doing something like `Hello §gMinecraft` ****will not work****.
-> The ability to only apply the formatting to a specific part of the text is not possible yet.
+Out-of-the-box the library provides multiple formatting codes you can use like vanilla formatting codes. When applying
+the custom formatting, the text dropShadow will be ignored and not drawn.
 
 > `§g`: Makes the text look shiny and golden
 >
