@@ -53,7 +53,11 @@ void main() {
             gl_FragColor = vec4(fireColor, 1.);
             return;
         }
+
+        gl_FragColor = vec4(0., 0., 0., 0.);
+        return;
     }
+
 
     gl_FragColor = vec4(0., 0., 0., 1.);
 }

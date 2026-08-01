@@ -1,7 +1,6 @@
 package brilliant_text.shader;
 
 import brilliant_text.BrilliantText;
-import brilliant_text.shader.builtin.BrilliantParticle;
 import brilliant_text.util.AABB2D;
 import brilliant_text.util.ColorHelper;
 import brilliant_text.util.TextureTarget;
@@ -164,10 +163,10 @@ public class BrilliantTextRenderer {
             float y4 = cy + (hw * sin + -hh * cos);
 
             ColorHelper.ARGBNorm argb = ColorHelper.hexToARGBNorm(particle.color);
-            buffer.pos(x1, y1, 0).tex(0, 0).color(argb.r, argb.g, argb.b, alpha).endVertex();
-            buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, alpha).endVertex();
-            buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, alpha).endVertex();
-            buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, alpha).endVertex();
+            buffer.pos(x1, y1, 0).tex(0, 0).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
+            buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
+            buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
+            buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
 
             particle.currentLifetime--;
             particle.rotation += particle.rotationsPerFrame;

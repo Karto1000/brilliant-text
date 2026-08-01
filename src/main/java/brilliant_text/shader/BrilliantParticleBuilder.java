@@ -1,11 +1,10 @@
-package brilliant_text.shader.builtin;
+package brilliant_text.shader;
 
 import mezz.jei.util.FieldsAreNonnullByDefault;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @FieldsAreNonnullByDefault

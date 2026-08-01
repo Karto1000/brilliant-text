@@ -1,7 +1,6 @@
 package brilliant_text.shader;
 
 import brilliant_text.BrilliantText;
-import brilliant_text.shader.builtin.BrilliantParticle;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

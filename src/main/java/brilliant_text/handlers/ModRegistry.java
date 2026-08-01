@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = BrilliantText.MODID)
 public class ModRegistry {
+    public static TestItem DIAMOND_TEST = new TestItem("diamond_item");
     public static TestItem GOLD_TEST = new TestItem("gold_item");
     public static TestItem SILVER_TEST = new TestItem("silver_item");
     public static TestItem COPPER_TEST = new TestItem("copper_item");
@@ -24,7 +25,8 @@ public class ModRegistry {
                     GOLD_TEST,
                     SILVER_TEST,
                     COPPER_TEST,
-                    BURNING_TEST
+                    BURNING_TEST,
+                    DIAMOND_TEST
             );
         }
     }

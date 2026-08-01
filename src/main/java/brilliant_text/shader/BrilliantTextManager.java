@@ -2,8 +2,6 @@ package brilliant_text.shader;
 
 import brilliant_text.BrilliantText;
 import brilliant_text.handlers.ForgeConfigHandler;
-import brilliant_text.shader.builtin.BrilliantParticle;
-import brilliant_text.shader.builtin.BrilliantParticleBuilder;
 import brilliant_text.shader.builtin.FlameTextShader;
 import brilliant_text.shader.builtin.IOutlinedTextShader;
 import lombok.Getter;
@@ -62,7 +60,7 @@ public class BrilliantTextManager {
     }
 
     private static void loadBindingsFromConfig() {
-        for (String entry : ForgeConfigHandler.client.characterBindings) {
+        for (String entry : ForgeConfigHandler.client.CHARACTER_BINDINGS) {
             try {
                 String[] parts = entry.split("=");
                 if (parts.length != 2) continue;

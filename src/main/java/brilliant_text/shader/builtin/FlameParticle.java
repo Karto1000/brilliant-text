@@ -1,5 +1,6 @@
 package brilliant_text.shader.builtin;
 
+import brilliant_text.shader.BrilliantParticle;
 import brilliant_text.shader.IParticleSpawner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec2f;

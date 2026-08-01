@@ -18,6 +18,36 @@ public class ForgeConfigHandler {
         @Config.Name("Debug Mode")
         public boolean DEBUG = false;
 
+        @Config.Name("Change Vanilla item formatting")
+        @Config.Comment({"Should certain vanilla items receive the shader effect?"})
+        public boolean CHANGE_VANILLA_ITEM_FORMATTING = true;
+
+        @Config.Name("Vanilla item formatting mapping")
+        @Config.Comment({"The list which decides which vanilla items are mapped to which shader"})
+        public String[] VANILLA_ITEM_FORMATTING_BINDING = new String[]{
+                "item.diamond.name=h",
+                "item.swordDiamond.name=h",
+                "item.shovelDiamond.name=h",
+                "item.pickaxeDiamond.name=h",
+                "item.hatchetDiamond.name=h",
+                "item.hoeDiamond.name=h",
+                "item.helmetDiamond.name=h",
+                "item.chestplateDiamond.name=h",
+                "item.leggingsDiamond.name=h",
+                "item.bootsDiamond.name=h",
+                "item.horsearmordiamond.name=h",
+                "tile.oreDiamond.name=h",
+                "tile.blockDiamond.name=h",
+
+                "item.appleGold.name=g",
+                "item.carrotGolden.name=g",
+                "tile.beacon.name=g",
+                "item.netherStar.name=g",
+
+                "item.blazeRod.name=v",
+                "item.blazePowder.name=v",
+        };
+
         @Config.Comment({
                 "Character to Shader Mappings.",
                 "Data Types: (hex) A color code in the ARGB format; (number-number) A random value between the first and second number; (ResourceLocation) A string pointing to a texture",
@@ -25,9 +55,10 @@ public class ForgeConfigHandler {
                 "Example: g=FF986B31|FFFCE670|FFFCE670|brilliant_text:textures/particles/glow.png|FFFCE670|100|200|2-4|1-360|0-1"
         })
         @Config.Name("Shader Bindings")
-        public String[] characterBindings = new String[]{
+        public String[] CHARACTER_BINDINGS = new String[]{
                 "g=FF986B31|FFFCE670|FFFCE670|brilliant_text:textures/particles/glow.png|FFFCE670|100|200|2-4|1-360|0-1",
                 "s=FF4C5E6F|FFD5EAF8|00000000|brilliant_text:textures/particles/glow.png|FFD5EAF8|100|200|2-4|1-360|0-1",
+                "h=FF0C3730|FF8CF4E2|FF8CF4E2|minecraft:textures/items/diamond.png|AA8CF4E2|150|400|3-4|0-45|0-0",
                 "q=FF60241E|FFE77B49|00000000",
         };
     }

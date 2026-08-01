@@ -1,10 +1,8 @@
-package brilliant_text.shader.builtin;
+package brilliant_text.shader;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import mezz.jei.util.FieldsAreNonnullByDefault;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec2f;
 
 @FieldsAreNonnullByDefault
 @AllArgsConstructor

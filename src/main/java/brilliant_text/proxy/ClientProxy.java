@@ -1,5 +1,6 @@
 package brilliant_text.proxy;
 
+import brilliant_text.handlers.VanillaItemRenameResourcePack;
 import brilliant_text.shader.BrilliantTextRenderer;
 import brilliant_text.shader.BrilliantTextManager;
 
@@ -8,5 +9,6 @@ public class ClientProxy extends CommonProxy {
     public void preInit() {
         BrilliantTextRenderer.init();
         BrilliantTextManager.init();
+        VanillaItemRenameResourcePack.init();
     }
 }
