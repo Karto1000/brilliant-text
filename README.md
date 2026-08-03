@@ -9,6 +9,12 @@ the [Legendary Tooltips](https://www.curseforge.com/minecraft/mc-mods/legendary-
 Out-of-the-box the library provides multiple formatting codes you can use like vanilla formatting codes. When applying
 the custom formatting, the text dropShadow will be ignored and not drawn.
 
+> `§h`: Makes the text look blue, resembling diamonds
+>
+> Example: `§hDIamond Item`
+>
+> ![diamond_formatting.gif](images/diamond_formatting.gif)
+
 > `§g`: Makes the text look shiny and golden
 >
 > Example: `§gLegendary Item`
@@ -37,11 +43,118 @@ the custom formatting, the text dropShadow will be ignored and not drawn.
 
 ### Config
 
-You can define custom colors via the `brilliant_text.cfg` file located in the `config` folder.
+You can define custom colors in the `brilliant_text_bindings.json` file located in the `config` folder. There you have a
+mapping of characters to text shader definitions.
+
+> For example, the bronze shader:
+>```json
+>{
+>  "q": {
+>    "textColors": [
+>      "FF60241E"
+>    ],
+>    "outlineColors": [
+>      "FFE77B49"
+>    ]
+>  }
+>}
+>```
+> This maps the character `q` to a new text shader which will possess the specified colors.
+
+#### Text Shader Definition
+
+> [!important]
+> A `color` field with more than one color in its list makes the thing the color is applied to smoothly cycle between
+all the defined colors. If a list has no elements, nothing is drawn.
+>
+> An object with the `min` and `max` properties will choose a random value between `min` and `max`.
+> For example:
+> ```json lines
+> {
+>   "dimensions": {
+>     "min": 1,
+>     "max": 5
+>   }
+> }
+> ```
+> Will choose a random value between `1` up to `4`
+
+A text shader definition can have the following fields
+
+```json lines
+{
+  "m": {
+    // A list of ARGB hex colors that the text will be drawn with
+    "textColors": [
+      "FF4C5E6F"
+    ],
+    // A list of ARGB hex colors that the outline will be drawn with
+    "outlineColors": [
+      "FFD5EAF8",
+      "FFF0F7FA"
+    ],
+    // A list of ARGB hex colors that the glow will be drawn with
+    "glowColors": [
+      "FFFFFFFF"
+    ],
+    // The configuration for particles. Remove this if you don't want to spawn any particles
+    "particleConfig": {
+      // The texture of the particle. Can be any minecraft / mod texture. Must be a valid ResourcePath
+      "texture": {
+        "namespace": "brilliant_text",
+        "path": "textures/particles/glow.png"
+      },
+      // The hex color of the particle
+      "color": "FFD5EAF8",
+      // A 1 in x chance of spawning the particle every frame
+      // 1-inf
+      "rarity": 100,
+      // The lifetime of the particle in frames
+      // 0-inf
+      "lifetime": 200,
+      // The width and height of the particle
+      "dimensions": {
+        // 1-inf
+        "min": 4.0,
+        // 1-inf
+        "max": 6.0
+      },
+      // The starting rotation of the particle
+      "rotation": {
+        // 0-inf
+        "min": 1.0,
+        // 0-inf
+        "max": 360.0
+      },
+      // The amount the particle rotates every frame
+      "rotationsPerFrame": {
+        // 0-inf
+        "min": 0.0,
+        // 0-inf
+        "max": 1.0
+      },
+      // Whether the particle should shrink during its lifetime
+      "shouldShrink": true
+    },
+    // The configuration for the 'wiper' effect that goes across the text. Remove this if you don't want this effect
+    "wiperConfig": {
+      // The color of the wiper
+      "color": "FFFFFFFF",
+      // How slow the wiper is, higher number = slower (0-inf)
+      "slowdown": 50
+    }
+  }
+}
+```
+
+> [!note]
+> The code for this data structure is
+in [ShaderDefinition.java](src/main/java/brilliant_text/config/ShaderDefinition.java)
 
 ### Code
 
-If you want to customize the text, outline and glow, you can create a new shader that implements the
+If you want to customize the text, outline and glow directly in the code, you can create a new shader that implements
+the
 `IOutlinedTextShader` interface. If you also want that shader to spawn particles, you need to implement the
 `IParticleSpawner` interface as well. From there you can customize the hex color codes for each component.
 
@@ -53,18 +166,21 @@ If you want to customize the text, outline and glow, you can create a new shader
 > public class GoldShader implements IOutlinedTextShader, IParticleSpawner {
 > 
 >     @Override
->     public int getTextColor() {
->         return 0xFF986B31;
+>     @Nonnull
+>     public NonNullList<Integer> getTextColors() {
+>         return NonNullList.withSize(1, 0xFF986B31);
 >     }
 > 
 >     @Override
->     public Optional<Integer> getGlowColor() {
+>     @Nonnull
+>     public NonNullList<Integer> getGlowColors() {
 >         return this.getOutlineColor();
 >     }
 > 
 >     @Override
->     public Optional<Integer> getOutlineColor() {
->         return Optional.of(0xFFFCE670);
+>     @Nonnull
+>     public NonNullList<Integer> getOutlineColors() {
+>         return NonNullList.withSize(1, 0xFFFCE670);
 >     }
 > 
 >     @Override
@@ -87,8 +203,7 @@ If you want to customize the text, outline and glow, you can create a new shader
 > ```
 
 From there you need to bind the shader to a character using the static `bindCharToShader(char, ITextShader)` method of
-the
-`BrilliantTextManager` class. This should be done in a `init()` method of a `ClientProxy` class.
+the `BrilliantTextManager` class. This should be done in a `init()` method of a `ClientProxy` class.
 
 
 > [!warning]
@@ -151,12 +266,12 @@ method.
 > // The Framebuffer object sampler that contains all of the text which should be formatted
 > uniform sampler2D u_texture;
 > // The size of the Framebuffer texture. This contains the scaled window width and height 
-> uniform vec2 u_textureSize;
+> uniform vec2 u_scaledScreenSize;
 > // The top left coordinates (x, y) of the text
 > uniform vec2 u_stringTopLeft;
 > // The bottom right coordinates (x, y) of the text
 > uniform vec2 u_stringBottomRight;
-> // A time variable
+> // A time variable set to the system time in milliseconds
 > uniform float u_time;
 > ```
 

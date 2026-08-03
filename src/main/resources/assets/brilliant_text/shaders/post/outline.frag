@@ -66,9 +66,11 @@ void main() {
         vec2 textureSize = u_stringBottomRight - u_stringTopLeft;
         float delta = mod(u_time / u_wiperSlowdown, textureSize.x + wiperWidth * 2);
         vec2 localCoords = vec2(pixelPos.x - u_stringTopLeft.x, pixelPos.y - u_stringTopLeft.y);
+        float distance = abs(localCoords.x + localCoords.y - delta);
+        float beta = clamp(1. - distance / wiperWidth, 0., 1.);
 
-        if (abs(localCoords.x + localCoords.y - delta) <= wiperWidth) {
-            gl_FragColor = u_wiperColor;
+        if (distance <= wiperWidth) {
+            gl_FragColor = mix(u_textColor, u_wiperColor, beta);
             return;
         }
     }

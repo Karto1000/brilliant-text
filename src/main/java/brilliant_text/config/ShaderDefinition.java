@@ -32,6 +32,23 @@ public class ShaderDefinition {
     @Builder.Default
     public WiperConfig wiperConfig = null;
 
+    public void validateAndSanitize() {
+        if (this.wiperConfig != null) {
+            this.wiperConfig.slowdown = Math.max(0, this.wiperConfig.slowdown);
+        }
+
+        if (this.particleConfig != null) {
+            this.particleConfig.rarity = Math.max(1, this.particleConfig.rarity);
+            this.particleConfig.lifetime = Math.max(0, this.particleConfig.lifetime);
+            this.particleConfig.dimensions.min = Math.max(1, this.particleConfig.dimensions.min);
+            this.particleConfig.dimensions.max = Math.max(1, this.particleConfig.dimensions.max);
+            this.particleConfig.rotationsPerFrame.min = Math.max(0, this.particleConfig.rotationsPerFrame.min);
+            this.particleConfig.rotationsPerFrame.max = Math.max(0, this.particleConfig.rotationsPerFrame.max);
+            this.particleConfig.rotation.min = Math.max(0, this.particleConfig.rotation.min);
+            this.particleConfig.rotation.max = Math.max(0, this.particleConfig.rotation.max);
+        }
+    }
+
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor

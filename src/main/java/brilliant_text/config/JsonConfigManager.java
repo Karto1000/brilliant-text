@@ -46,6 +46,8 @@ public class JsonConfigManager {
 
             for (Map.Entry<Character, ShaderDefinition> entry : definitions.entrySet()) {
                 ShaderDefinition definitionData = entry.getValue();
+                definitionData.validateAndSanitize();
+
                 char character = entry.getKey();
 
                 class ConfigShader implements IOutlinedTextShader, IParticleSpawner {
@@ -106,7 +108,7 @@ public class JsonConfigManager {
                         if (definitionData.wiperConfig.color == null) return this.getTextColors()
                                 .stream()
                                 .findFirst()
-                                .map(c -> ColorHelper.brighten(c, 1.0F));
+                                .map(c -> ColorHelper.brighten(c, 1.5F));
                         return Optional.of(definitionData.wiperConfig.color);
                     }
 
