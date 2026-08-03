@@ -16,6 +16,7 @@ public class BrilliantParticleBuilder {
     private int dimensions = 8;
     private float rotationsPerFrame = 0;
     private float rotation = 0;
+    private boolean shouldShrink = false;
 
     public BrilliantParticleBuilder(ResourceLocation texture, Vec2f pos) {
         this.texture = texture;
@@ -47,6 +48,11 @@ public class BrilliantParticleBuilder {
         return this;
     }
 
+    public BrilliantParticleBuilder shouldShrink(boolean shouldShrink) {
+        this.shouldShrink = shouldShrink;
+        return this;
+    }
+
     public BrilliantParticle build() {
         return new BrilliantParticle(
                 this.pos.x,
@@ -57,7 +63,8 @@ public class BrilliantParticleBuilder {
                 this.dimensions,
                 this.rotationsPerFrame,
                 this.rotation,
-                this.texture
+                this.texture,
+                this.shouldShrink
         );
     }
 }

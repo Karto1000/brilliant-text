@@ -2,6 +2,7 @@ package brilliant_text.shader;
 
 import brilliant_text.BrilliantText;
 import brilliant_text.util.AABB2D;
+import brilliant_text.util.ARGBNorm;
 import brilliant_text.util.ColorHelper;
 import brilliant_text.util.TextureTarget;
 import lombok.Getter;
@@ -136,19 +137,27 @@ public class BrilliantTextRenderer {
                 continue;
             }
 
-            float alpha = particle.currentLifetime / particle.maxLifetime;
+            float lifetimeLeft = particle.currentLifetime / particle.maxLifetime;
 
-            float hw = particle.dimensions;
-            float hh = particle.dimensions;
-            float cx = particle.x + hw;
-            float cy = particle.y + hh;
+            // 1. Calculate full size and half-size based on shrink state
+            float currentSize = particle.shouldShrink ? particle.dimensions * lifetimeLeft : particle.dimensions;
+            float hw = currentSize / 2.0f;
+            float hh = currentSize / 2.0f;
+
+            // 2. Keep the center fixed based on the INITIAL full dimensions (so it doesn't drift)
+            // If particle.x/y is the top-left, the true center is (x + initial_dimension/2, y + initial_dimension/2)
+            float initialHw = particle.dimensions / 2.0f;
+            float initialHh = particle.dimensions / 2.0f;
+            float cx = particle.x + initialHw;
+            float cy = particle.y + initialHh;
 
             // Calculate rotation
             float angleRad = (float) Math.toRadians(particle.rotation);
             float cos = (float) Math.cos(angleRad);
             float sin = (float) Math.sin(angleRad);
 
-            // Calculate rotated corners
+            // 3. Calculate rotated corners using the SHRUNK half-dimensions (hw, hh)
+            // around the FIXED center (cx, cy)
             // Top-Left
             float x1 = cx + (-hw * cos - -hh * sin);
             float y1 = cy + (-hw * sin + -hh * cos);
@@ -162,15 +171,14 @@ public class BrilliantTextRenderer {
             float x4 = cx + (hw * cos - -hh * sin);
             float y4 = cy + (hw * sin + -hh * cos);
 
-            ColorHelper.ARGBNorm argb = ColorHelper.hexToARGBNorm(particle.color);
-            buffer.pos(x1, y1, 0).tex(0, 0).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
-            buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
-            buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
-            buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, argb.a * alpha).endVertex();
+            ARGBNorm argb = ColorHelper.hexToARGBNorm(particle.color);
+            buffer.pos(x1, y1, 0).tex(0, 0).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
+            buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
+            buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
+            buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
 
             particle.currentLifetime--;
             particle.rotation += particle.rotationsPerFrame;
-
         }
 
         tessellator.draw();

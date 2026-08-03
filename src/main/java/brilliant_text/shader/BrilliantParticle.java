@@ -24,6 +24,8 @@ public class BrilliantParticle {
     public float rotation;
     /// The texture of the particle
     public ResourceLocation texture;
+    /// If the particle should shrink during its lifetime
+    public boolean shouldShrink;
 
     public void onRenderTick() {};
 }

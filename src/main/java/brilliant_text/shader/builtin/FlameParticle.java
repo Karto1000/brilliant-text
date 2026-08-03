@@ -12,7 +12,7 @@ public class FlameParticle extends BrilliantParticle {
     public final int originalColor;
     public final float reducedLifetime;
 
-    FlameParticle(Vec2f position) {
+    public FlameParticle(Vec2f position) {
         super(
                 position.x,
                 position.y,
@@ -22,7 +22,8 @@ public class FlameParticle extends BrilliantParticle {
                 2,
                 1F,
                 0,
-                IParticleSpawner.GLOW_PARTICLE_TEXTURE_2
+                IParticleSpawner.GLOW_PARTICLE_TEXTURE_2,
+                false
         );
 
         Minecraft mc = Minecraft.getMinecraft();
@@ -31,7 +32,7 @@ public class FlameParticle extends BrilliantParticle {
         this.color = mc.world.rand.nextInt(2) == 0 ? 0xFFFF4433 : 0xFFCC5500;
         this.maxLifetime = lifetime;
         this.currentLifetime = lifetime;
-        this.dimensions = mc.world.rand.nextInt(2) + 1;
+        this.dimensions = mc.world.rand.nextInt(4) + 1;
         this.velocity = new Vec2f((float) ((Math.random() - 0.5) * 0.1), -0.1F);
         this.originalColor = this.color;
         this.reducedLifetime = mc.world.rand.nextInt(100);

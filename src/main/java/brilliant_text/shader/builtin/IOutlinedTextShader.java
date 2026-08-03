@@ -1,48 +1,72 @@
 package brilliant_text.shader.builtin;
 
 import brilliant_text.shader.*;
+import brilliant_text.util.ARGBNorm;
 import brilliant_text.util.ColorHelper;
-import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import java.time.Duration;
 import java.util.Optional;
 
-@ParametersAreNonnullByDefault
 @SideOnly(Side.CLIENT)
 public interface IOutlinedTextShader extends ITextShader {
     /// Decides the color of the glow in the background of the text
     ///
-    /// @return The color represented as hex wrapped in an optional. An empty optional indicates that no glow is present
+    /// @return A non-null list of colors that will be interpolated through. Return only a single element for a solid color.
+    ///         Returning an empty list causes no glow to be drawn
     @Nonnull
-    default Optional<Integer> getGlowColor() {
-        return Optional.empty();
+    default NonNullList<Integer> getGlowColors() {
+        return NonNullList.create();
+    }
+
+    /// The time that it takes to transition from one glow color to the next
+    ///
+    /// @return The time
+    @Nonnull
+    default Duration getGlowColorTransitionDuration() {
+        return Duration.ofMillis(1000);
     }
 
     /// Decides the color of the text outline
     ///
-    /// @return The color represented as hex wrapped in an optional. An empty optional indicates that no outline is present
+    /// @return A non-null list of colors that will be interpolated through. Return only a single element for a solid color.
+    ///         Returning an empty list causes no outline to be drawn
     @Nonnull
-    default Optional<Integer> getOutlineColor() {
-        return Optional.empty();
+    default NonNullList<Integer> getOutlineColors() {
+        return NonNullList.create();
+    }
+
+    /// The time that it takes to transition from one outline color to the next
+    ///
+    /// @return The time
+    @Nonnull
+    default Duration getOutlineColorTransitionDuration() {
+        return Duration.ofMillis(1000);
     }
 
     /// Decides the color of the text
     ///
-    /// @return The color of the text as hex
-    default int getTextColor() {
-        return 0xFFFFFFFF;
+    /// @return A non-null list of colors that will be interpolated through. Return only a single element for a solid color.
+    ///         Returning an empty list causes no text to be drawn
+    @Nonnull
+    default NonNullList<Integer> getTextColors() {
+        return NonNullList.withSize(1, 0xFFFFFFFF);
+    }
+
+    /// The time that it takes to transition from one text color to the next
+    ///
+    /// @return The time
+    @Nonnull
+    default Duration getTextColorTransitionDuration() {
+        return Duration.ofMillis(1000);
     }
 
     @Override
@@ -51,10 +75,11 @@ public interface IOutlinedTextShader extends ITextShader {
         return id.orElseThrow(() -> new ShaderNotFoundException("No Shader program"));
     }
 
+    @Override
     default void renderPass(
-            BufferBuilder buffer,
-            BrilliantTextData brilliantTextData,
-            ScaledResolution res
+            @Nonnull BufferBuilder buffer,
+            @Nonnull BrilliantTextData brilliantTextData,
+            @Nonnull ScaledResolution res
     ) {
         ITextShader.super.renderPass(buffer, brilliantTextData, res);
         int programId = this.getShaderProgramId();
@@ -65,7 +90,11 @@ public interface IOutlinedTextShader extends ITextShader {
 
         IOutlinedTextShader shader = (IOutlinedTextShader) brilliantTextData.shader;
 
-        ColorHelper.ARGBNorm outlineColor = ColorHelper.hexToARGBNorm(shader.getOutlineColor().orElse(0x00000000));
+        NonNullList<Integer> outlineColors = shader.getOutlineColors();
+        ARGBNorm outlineColor = ColorHelper.smoothInterpolate(
+                this.getOutlineColorTransitionDuration(),
+                outlineColors
+        );
         ARBShaderObjects.glUniform4fARB(
                 outlineColorUniform,
                 outlineColor.r,
@@ -74,7 +103,11 @@ public interface IOutlinedTextShader extends ITextShader {
                 outlineColor.a
         );
 
-        ColorHelper.ARGBNorm glowColor = ColorHelper.hexToARGBNorm(shader.getGlowColor().orElse(0x00000000));
+        NonNullList<Integer> glowColors = shader.getGlowColors();
+        ARGBNorm glowColor = ColorHelper.smoothInterpolate(
+                this.getGlowColorTransitionDuration(),
+                glowColors
+        );
         ARBShaderObjects.glUniform4fARB(
                 glowColorUniform,
                 glowColor.r,
@@ -83,7 +116,12 @@ public interface IOutlinedTextShader extends ITextShader {
                 glowColor.a
         );
 
-        ColorHelper.ARGBNorm textColor = ColorHelper.hexToARGBNorm(shader.getTextColor());
+
+        NonNullList<Integer> textColors = shader.getTextColors();
+        ARGBNorm textColor = ColorHelper.smoothInterpolate(
+                this.getTextColorTransitionDuration(),
+                textColors
+        );
         ARBShaderObjects.glUniform4fARB(
                 textColorUniform,
                 textColor.r,
