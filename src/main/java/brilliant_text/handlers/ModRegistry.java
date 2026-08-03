@@ -1,6 +1,7 @@
 package brilliant_text.handlers;
 
 import brilliant_text.BrilliantText;
+import brilliant_text.config.ForgeConfigHandler;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -33,5 +33,6 @@ public class BrilliantText {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         completedLoading = true;
+        BrilliantText.PROXY.postInit();
     }
 }

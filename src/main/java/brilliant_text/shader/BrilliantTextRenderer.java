@@ -223,9 +223,11 @@ public class BrilliantTextRenderer {
             for (BrilliantTextData brilliantTextData : brilliantTexts) {
                 if (brilliantTextData.shader instanceof IParticleSpawner) {
                     IParticleSpawner spawner = (IParticleSpawner) brilliantTextData.shader;
-                    BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
                     Minecraft mc = Minecraft.getMinecraft();
-                    if (spawner.shouldSpawnParticle(mc.world.rand)) BrilliantTextRenderer.getParticles().add(particle);
+                    if (spawner.shouldSpawnParticle(mc.world.rand)) {
+                        BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
+                        BrilliantTextRenderer.getParticles().add(particle);
+                    }
                 }
 
                 brilliantTextData.shader.renderPass(buffer, brilliantTextData, res);

@@ -69,6 +69,21 @@ public interface IOutlinedTextShader extends ITextShader {
         return Duration.ofMillis(1000);
     }
 
+    /// Decides the color of the wiper that goes across the text
+    ///
+    /// @return The color wrapped in an optional, an empty optional means that no wiper will be drawn
+    @Nonnull
+    default Optional<Integer> getWiperColor() {
+        return Optional.empty();
+    }
+
+    /// A number that determines the speed of the wiper
+    ///
+    /// @return The slowdown amount, higher = slower
+    default int getWiperSlowdown() {
+        return 50;
+    }
+
     @Override
     default int getShaderProgramId() throws ShaderNotFoundException {
         Optional<Integer> id = BrilliantShaderManager.getProgramId(BrilliantTextManager.DEFAULT_SHADER_DESIGNATION);
@@ -87,6 +102,8 @@ public interface IOutlinedTextShader extends ITextShader {
         int outlineColorUniform = ARBShaderObjects.glGetUniformLocationARB(programId, "u_outlineColor");
         int glowColorUniform = ARBShaderObjects.glGetUniformLocationARB(programId, "u_glowColor");
         int textColorUniform = ARBShaderObjects.glGetUniformLocationARB(programId, "u_textColor");
+        int wiperColorUniform = ARBShaderObjects.glGetUniformLocationARB(programId, "u_wiperColor");
+        int wiperSlowdownUniform = ARBShaderObjects.glGetUniformLocationARB(programId, "u_wiperSlowdown");
 
         IOutlinedTextShader shader = (IOutlinedTextShader) brilliantTextData.shader;
 
@@ -129,6 +146,17 @@ public interface IOutlinedTextShader extends ITextShader {
                 textColor.b,
                 textColor.a
         );
+
+        ARGBNorm wiperColor = ColorHelper.hexToARGBNorm(shader.getWiperColor().orElse(0x00000000));
+        ARBShaderObjects.glUniform4fARB(
+                wiperColorUniform,
+                wiperColor.r,
+                wiperColor.g,
+                wiperColor.b,
+                wiperColor.a
+        );
+
+        ARBShaderObjects.glUniform1iARB(wiperSlowdownUniform, this.getWiperSlowdown());
 
         float padding = 1;
         float minX = brilliantTextData.aabb.getMinX() - padding;

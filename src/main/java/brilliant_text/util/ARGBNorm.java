@@ -1,5 +1,8 @@
 package brilliant_text.util;
 
+import lombok.ToString;
+
+@ToString
 public class ARGBNorm {
     public float a;
     public float r;

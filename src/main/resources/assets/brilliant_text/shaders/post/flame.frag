@@ -1,10 +1,10 @@
 #version 120
 
 uniform sampler2D u_texture;
-uniform vec2 u_textureSize;
+uniform vec2 u_scaledScreenSize;
 uniform vec2 u_stringTopLeft;
 uniform vec2 u_stringBottomRight;
-uniform float u_time;
+uniform int u_time;
 
 float hash(vec2 p) {
     p = fract(p * vec2(123.34, 456.21));
@@ -24,7 +24,7 @@ float noise(vec2 p) {
 }
 
 bool isTextAtRelative(vec2 position) {
-    vec2 offset = position / u_textureSize;
+    vec2 offset = position / u_scaledScreenSize;
     vec4 texColor = texture2D(u_texture, gl_TexCoord[0].st + offset);
     return texColor.a != 0.;
 }
@@ -33,6 +33,8 @@ void main() {
     vec2 st = gl_TexCoord[0].st;
     vec4 texColor = texture2D(u_texture, st);
 
+    float timeSeconds = u_time / 1000.;
+
     if (texColor.a == 0.) {
         bool aboveText = isTextAtRelative(vec2(0., 1.));
         bool rightText = isTextAtRelative(vec2(1., 0.));
@@ -40,7 +42,7 @@ void main() {
         bool leftText = isTextAtRelative(vec2(-1., 0.));
 
         if (aboveText || rightText || belowText || leftText) {
-            vec2 firePos = st * u_textureSize * 0.12 + vec2(0.0, -u_time * 4.0);
+            vec2 firePos = st * u_scaledScreenSize * 0.12 + vec2(0.0, -timeSeconds * 4.0);
             float heatPattern = noise(firePos);
 
             vec3 deepRed = vec3(0.85, 0.10, 0.00);

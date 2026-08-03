@@ -1,8 +1,5 @@
 item.brilliant_text.diamond_item.name=§hDiamond Item
-
-item.brilliant_text.gold_item.name=§g§lLegendary Item
-tooltip.brilliant_text.gold_item=This is a §gLegendary Item§f... §gWOW
-
+item.brilliant_text.gold_item.name=§gLegendary Item
 item.brilliant_text.silver_item.name=§sRare Item
 item.brilliant_text.copper_item.name=§qUncommon Item
 item.brilliant_text.burning_item.name=§vBurning Item
