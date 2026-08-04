@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -26,6 +27,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = BrilliantText.MODID, value = Side.CLIENT)
@@ -39,8 +41,6 @@ public class BrilliantTextRenderer {
     private static int lastHeight;
 
     private static final List<BrilliantTextData> brilliantTexts = new ArrayList<>();
-
-    @Getter
     private static final List<BrilliantParticle> particles = new ArrayList<>();
 
     public static void init() {
@@ -48,6 +48,11 @@ public class BrilliantTextRenderer {
         fboTarget = new TextureTarget(mc.displayWidth, mc.displayHeight);
         lastWidth = mc.displayWidth;
         lastHeight = mc.displayHeight;
+    }
+
+    public static void addParticle(BrilliantParticle particle) {
+        particles.add(particle);
+        particles.sort(Comparator.comparing(p -> p.texture));
     }
 
     public static void addBrilliantTextAt(AABB2D aabb, ITextShader shader) {
@@ -123,18 +128,26 @@ public class BrilliantTextRenderer {
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
 
+        ResourceLocation lastTexture = null;
+
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-        List<BrilliantParticle> particles = BrilliantTextRenderer.getParticles();
         for (int i = particles.size() - 1; i >= 0; i--) {
             BrilliantParticle particle = particles.get(i);
             particle.onRenderTick();
-
-            mc.getTextureManager().bindTexture(particle.texture);
+            if (i == particles.size()) mc.getTextureManager().bindTexture(particle.texture);
 
             if (particle.currentLifetime == 0) {
                 particles.remove(i);
                 continue;
+            }
+
+            // If the texture changes, we must flush the current batch and bind the new texture
+            if (!particle.texture.equals(lastTexture)) {
+                tessellator.draw();
+                mc.getTextureManager().bindTexture(particle.texture);
+                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+                lastTexture = particle.texture;
             }
 
             float lifetimeLeft = particle.currentLifetime / particle.maxLifetime;
@@ -182,7 +195,6 @@ public class BrilliantTextRenderer {
         }
 
         tessellator.draw();
-
         GlStateManager.enableDepth();
         GlStateManager.enableLighting();
     }
@@ -226,7 +238,7 @@ public class BrilliantTextRenderer {
                     Minecraft mc = Minecraft.getMinecraft();
                     if (spawner.shouldSpawnParticle(mc.world.rand)) {
                         BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
-                        BrilliantTextRenderer.getParticles().add(particle);
+                        BrilliantTextRenderer.addParticle(particle);
                     }
                 }
 
