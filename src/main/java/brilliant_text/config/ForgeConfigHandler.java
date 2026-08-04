@@ -16,14 +16,15 @@ public class ForgeConfigHandler {
 
     public static class ClientConfig {
         @Config.Name("Debug Mode")
+        @Config.Comment("Will add debug items with all the shader effects applied to them")
         public boolean DEBUG = false;
 
         @Config.Name("Change Vanilla item formatting")
-        @Config.Comment({"Should certain vanilla items receive the shader effect?"})
-        public boolean CHANGE_VANILLA_ITEM_FORMATTING = true;
+        @Config.Comment("Should certain vanilla items receive the shader effect?")
+        public boolean CHANGE_VANILLA_ITEM_FORMATTING = false;
 
         @Config.Name("Vanilla item formatting mapping")
-        @Config.Comment({"The list which decides which vanilla items are mapped to which shader"})
+        @Config.Comment("The list that decides which vanilla items are mapped to which shader")
         public String[] VANILLA_ITEM_FORMATTING_BINDING = new String[]{
                 "item.diamond.name=h",
                 "item.swordDiamond.name=h",
