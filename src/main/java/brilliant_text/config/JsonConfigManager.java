@@ -70,16 +70,17 @@ public class JsonConfigManager {
                     public BrilliantParticle getNewParticle(@Nonnull BrilliantTextData data) {
                         assert definitionData.particleConfig != null;
 
-                        Minecraft mc = Minecraft.getMinecraft();
+                        Random rand = RandomInstance.getInstance();
+
                         return new BrilliantParticleBuilder(
                                 definitionData.particleConfig.texture,
                                 data.aabb.getRandomPositionInside()
                         )
                                 .color(definitionData.particleConfig.color)
                                 .lifetime(definitionData.particleConfig.lifetime)
-                                .rotationsPerFrame((mc.world.rand.nextFloat() * definitionData.particleConfig.rotationsPerFrame.max) + definitionData.particleConfig.rotationsPerFrame.min)
-                                .rotation((mc.world.rand.nextFloat() * definitionData.particleConfig.rotation.max) + definitionData.particleConfig.rotation.min)
-                                .dimensions((int) ((mc.world.rand.nextFloat() * definitionData.particleConfig.dimensions.max) + definitionData.particleConfig.dimensions.min))
+                                .rotationsPerFrame((rand.nextFloat() * definitionData.particleConfig.rotationsPerFrame.max) + definitionData.particleConfig.rotationsPerFrame.min)
+                                .rotation((rand.nextFloat() * definitionData.particleConfig.rotation.max) + definitionData.particleConfig.rotation.min)
+                                .dimensions((int) ((rand.nextFloat() * definitionData.particleConfig.dimensions.max) + definitionData.particleConfig.dimensions.min))
                                 .shouldShrink(definitionData.particleConfig.shouldShrink)
                                 .build();
                     }

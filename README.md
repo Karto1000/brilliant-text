@@ -190,13 +190,13 @@ the
 > 
 >     @Override
 >     public ParticleSettings getNewParticle(@Nonnull BrilliantTextData data) {
->         Minecraft mc = Minecraft.getMinecraft();
+>         Random rand = RandomInstance.getInstance();
 >         return new BrilliantParticleBuilder(GLOW_PARTICLE_TEXTURE_1, data.aabb.getRandomPositionInside())
 >               .color(this.getOutlineColor().get())
 >               .lifetime(200)
->               .rotation(mc.world.rand.nextInt(360))
->               .rotationsPerFrame(mc.world.rand.nextFloat())
->               .dimensions(mc.world.rand.nextInt(4) + 2)
+>               .rotation(rand.nextInt(360))
+>               .rotationsPerFrame(rand.nextFloat())
+>               .dimensions(rand.nextInt(4) + 2)
 >               .build();
 >     }
 > }

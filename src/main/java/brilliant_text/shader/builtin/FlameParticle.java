@@ -2,8 +2,10 @@ package brilliant_text.shader.builtin;
 
 import brilliant_text.shader.BrilliantParticle;
 import brilliant_text.shader.IParticleSpawner;
-import net.minecraft.client.Minecraft;
+import brilliant_text.shader.RandomInstance;
 import net.minecraft.util.math.Vec2f;
+
+import java.util.Random;
 
 import static net.minecraft.util.math.MathHelper.clamp;
 
@@ -16,9 +18,9 @@ public class FlameParticle extends BrilliantParticle {
         super(
                 position.x,
                 position.y,
-                0,
+                1,
                 0xFFCC5500,
-                0,
+                1,
                 2,
                 1F,
                 0,
@@ -26,16 +28,16 @@ public class FlameParticle extends BrilliantParticle {
                 false
         );
 
-        Minecraft mc = Minecraft.getMinecraft();
+        Random rand = RandomInstance.getInstance();
 
-        int lifetime = mc.world.rand.nextInt(100) + 100;
-        this.color = mc.world.rand.nextInt(2) == 0 ? 0xFFFF4433 : 0xFFCC5500;
+        int lifetime = rand.nextInt(100) + 100;
+        this.color = rand.nextInt(2) == 0 ? 0xFFFF4433 : 0xFFCC5500;
         this.maxLifetime = lifetime;
         this.currentLifetime = lifetime;
-        this.dimensions = mc.world.rand.nextInt(4) + 1;
+        this.dimensions = rand.nextInt(4) + 1;
         this.velocity = new Vec2f((float) ((Math.random() - 0.5) * 0.1), -0.1F);
         this.originalColor = this.color;
-        this.reducedLifetime = mc.world.rand.nextInt(100);
+        this.reducedLifetime = rand.nextInt(100);
     }
 
     @Override

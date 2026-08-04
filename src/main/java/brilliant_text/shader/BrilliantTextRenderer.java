@@ -29,6 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = BrilliantText.MODID, value = Side.CLIENT)
 @ParametersAreNonnullByDefault
@@ -56,6 +57,8 @@ public class BrilliantTextRenderer {
     }
 
     public static void addBrilliantTextAt(AABB2D aabb, ITextShader shader) {
+        if (aabb.width <= 0 || aabb.height <= 0) return;
+
         BrilliantTextData data = new BrilliantTextData(aabb, shader);
         brilliantTexts.add(data);
     }
@@ -235,8 +238,8 @@ public class BrilliantTextRenderer {
             for (BrilliantTextData brilliantTextData : brilliantTexts) {
                 if (brilliantTextData.shader instanceof IParticleSpawner) {
                     IParticleSpawner spawner = (IParticleSpawner) brilliantTextData.shader;
-                    Minecraft mc = Minecraft.getMinecraft();
-                    if (spawner.shouldSpawnParticle(mc.world.rand)) {
+                    Random rand = RandomInstance.getInstance();
+                    if (spawner.shouldSpawnParticle(rand)) {
                         BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
                         BrilliantTextRenderer.addParticle(particle);
                     }

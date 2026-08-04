@@ -1,7 +1,10 @@
 package brilliant_text.util;
 
+import brilliant_text.shader.RandomInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec2f;
+
+import java.util.Random;
 
 public class AABB2D {
     public final float x;
@@ -10,6 +13,9 @@ public class AABB2D {
     public final int height;
 
     public AABB2D(float x, float y, int width, int height) {
+        if (width < 0) throw new IllegalArgumentException("width cannot be negative");
+        if (height < 0) throw new IllegalArgumentException("height cannot be negative");
+
         this.x = x;
         this.y = y;
         this.width = width;
@@ -33,10 +39,13 @@ public class AABB2D {
     }
 
     public Vec2f getRandomPositionInside() {
-        Minecraft mc = Minecraft.getMinecraft();
+        Random rand = RandomInstance.getInstance();
+        int randX = this.width > 0 ? rand.nextInt(this.width) : 0;
+        int randY = this.height > 0 ? rand.nextInt(this.height) : 0;
+
         return new Vec2f(
-                this.x + mc.world.rand.nextInt(this.width),
-                this.y - ((float) this.height / 2) + mc.world.rand.nextInt(this.height)
+                this.x + randX,
+                this.y - ((float) this.height / 2) + randY
         );
     }
 }
