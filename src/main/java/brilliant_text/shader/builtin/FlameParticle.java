@@ -30,14 +30,14 @@ public class FlameParticle extends BrilliantParticle {
 
         Random rand = RandomInstance.getInstance();
 
-        int lifetime = rand.nextInt(100) + 100;
+        int lifetime = rand.nextInt(20) + 10;
         this.color = rand.nextInt(2) == 0 ? 0xFFFF4433 : 0xFFCC5500;
         this.maxLifetime = lifetime;
         this.currentLifetime = lifetime;
         this.dimensions = rand.nextInt(4) + 1;
-        this.velocity = new Vec2f((float) ((Math.random() - 0.5) * 0.1), -0.1F);
+        this.velocity = new Vec2f((float) ((Math.random() - 0.5) * 0.025), -0.025F);
         this.originalColor = this.color;
-        this.reducedLifetime = rand.nextInt(100);
+        this.reducedLifetime = rand.nextInt(20);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class FlameTextShader implements ITextShader, IParticleSpawner {
 
     @Override
     public boolean shouldSpawnParticle(@Nonnull Random random) {
-        return random.nextInt(20) == 0;
+        return true;
     }
 
     /// Get the particle

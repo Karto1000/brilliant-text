@@ -106,12 +106,12 @@ A text shader definition can have the following fields
       },
       // The hex color of the particle
       "color": "FFD5EAF8",
-      // A 1 in x chance of spawning the particle every frame
+      // A 1 in x chance of spawning the particle every tick
       // 1-inf
-      "rarity": 100,
-      // The lifetime of the particle in frames
+      "rarity": 20,
+      // The lifetime of the particle in ticks
       // 0-inf
-      "lifetime": 200,
+      "lifetime": 40,
       // The width and height of the particle
       "dimensions": {
         // 1-inf
@@ -126,7 +126,7 @@ A text shader definition can have the following fields
         // 0-inf
         "max": 360.0
       },
-      // The amount the particle rotates every frame
+      // The amount the particle rotates every tick
       "rotationsPerFrame": {
         // 0-inf
         "min": 0.0,
@@ -185,7 +185,7 @@ the
 > 
 >     @Override
 >     public boolean shouldSpawnParticle(@Nonnull Random random) {
->         return random.nextInt(100) == 0;
+>         return random.nextInt(20) == 0;
 >     } 
 > 
 >     @Override

@@ -42,6 +42,7 @@ public class BrilliantTextRenderer {
     private static int lastHeight;
 
     private static final List<BrilliantTextData> brilliantTexts = new ArrayList<>();
+    private static final List<BrilliantTextData> activeSpawners = new ArrayList<>();
     private static final List<BrilliantParticle> particles = new ArrayList<>();
 
     public static void init() {
@@ -96,8 +97,22 @@ public class BrilliantTextRenderer {
         }
     }
 
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            updateParticles();
+        }
+    }
+
     public static void flush() {
         if (brilliantTexts.isEmpty()) return;
+
+        // Since the brilliantTexts list is cleared before the onClientTick event fires, we need to keep all the spawners
+        // so they can be accessed there
+        activeSpawners.clear();
+        for (BrilliantTextData data : brilliantTexts) {
+            if (data.shader instanceof IParticleSpawner) activeSpawners.add(data);
+        }
 
         BrilliantTextRenderer.drawFBOToScreen();
 
@@ -115,10 +130,37 @@ public class BrilliantTextRenderer {
     public static void onGuiDrawScreenPost(GuiScreenEvent.DrawScreenEvent.Post event) {
         if (brilliantTexts.isEmpty()) {
             particles.clear();
+            activeSpawners.clear();
             return;
         }
 
         flush();
+    }
+
+    private static void updateParticles() {
+        // Decouple the spawning of the particles from the framerate
+        if (BrilliantShaderManager.hasAnyShaders() && !activeSpawners.isEmpty()) {
+            for (BrilliantTextData data : activeSpawners) {
+                IParticleSpawner spawner = (IParticleSpawner) data.shader;
+                Random rand = RandomInstance.getInstance();
+                if (spawner.shouldSpawnParticle(rand)) {
+                    BrilliantParticle particle = spawner.getNewParticle(data);
+                    BrilliantTextRenderer.addParticle(particle);
+                }
+            }
+        }
+
+        for (int i = particles.size() - 1; i >= 0; i--) {
+            BrilliantParticle particle = particles.get(i);
+
+            if (particle.currentLifetime == 0) {
+                particles.remove(i);
+                continue;
+            }
+
+            particle.currentLifetime--;
+            particle.rotation += particle.rotationsPerFrame;
+        }
     }
 
     private static void renderParticles() {
@@ -139,11 +181,6 @@ public class BrilliantTextRenderer {
             BrilliantParticle particle = particles.get(i);
             particle.onRenderTick();
             if (i == particles.size()) mc.getTextureManager().bindTexture(particle.texture);
-
-            if (particle.currentLifetime == 0) {
-                particles.remove(i);
-                continue;
-            }
 
             // If the texture changes, we must flush the current batch and bind the new texture
             if (!particle.texture.equals(lastTexture)) {
@@ -192,9 +229,6 @@ public class BrilliantTextRenderer {
             buffer.pos(x2, y2, 0).tex(0, 1).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
             buffer.pos(x3, y3, 0).tex(1, 1).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
             buffer.pos(x4, y4, 0).tex(1, 0).color(argb.r, argb.g, argb.b, argb.a * lifetimeLeft).endVertex();
-
-            particle.currentLifetime--;
-            particle.rotation += particle.rotationsPerFrame;
         }
 
         tessellator.draw();
@@ -236,15 +270,6 @@ public class BrilliantTextRenderer {
 
         if (BrilliantShaderManager.hasAnyShaders()) {
             for (BrilliantTextData brilliantTextData : brilliantTexts) {
-                if (brilliantTextData.shader instanceof IParticleSpawner) {
-                    IParticleSpawner spawner = (IParticleSpawner) brilliantTextData.shader;
-                    Random rand = RandomInstance.getInstance();
-                    if (spawner.shouldSpawnParticle(rand)) {
-                        BrilliantParticle particle = spawner.getNewParticle(brilliantTextData);
-                        BrilliantTextRenderer.addParticle(particle);
-                    }
-                }
-
                 brilliantTextData.shader.renderPass(buffer, brilliantTextData, res);
                 tessellator.draw();
             }
